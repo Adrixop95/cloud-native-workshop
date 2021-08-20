@@ -1,0 +1,18 @@
+version: "3.8"
+services:
+
+    psql-db:
+        image: "postgres:13-alpine"
+        container_name: "psql-db"
+        environment:
+            - POSTGRES_USER=test-user
+            - POSTGRES_PASSWORD=test-password
+            - POSTGRES_DB=test-database
+        ports:
+            - 5432:5432
+        volumes:
+            - psql-db:/var/lib/postgresql
+        restart: unless-stopped
+
+volumes:
+    psql-db:
