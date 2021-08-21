@@ -1,6 +1,21 @@
 version: "3.8"
 services:
 
+    go-app:
+        build:
+            dockerfile: Dockerfile
+            context: .
+        environment:
+            - psql_host=psql-db
+            - psql_port=5432
+            - psql_user=test-user
+            - psql_passwd=test-password
+            - psql_dbname=test-database
+        ports:
+            - 3000:3000
+        container_name: "go-app"
+        restart: unless-stopped
+ 
     psql-db:
         image: "postgres:13-alpine"
         container_name: "psql-db"
