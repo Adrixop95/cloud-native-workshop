@@ -1,6 +1,5 @@
 version: "3.8"
 services:
-
     go-app:
         build:
             dockerfile: Dockerfile
@@ -12,7 +11,7 @@ services:
             - psql_passwd=test-password
             - psql_dbname=test-database
         ports:
-            - 3000:3000
+            - "8080:8080"
         container_name: "go-app"
         restart: unless-stopped
  
@@ -23,8 +22,6 @@ services:
             - POSTGRES_USER=test-user
             - POSTGRES_PASSWORD=test-password
             - POSTGRES_DB=test-database
-        ports:
-            - 5432:5432
         volumes:
             - psql-db:/var/lib/postgresql
         restart: unless-stopped

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
@@ -47,7 +48,13 @@ var (
 func main() {
 	router := mux.NewRouter()
 
-	dsn := "host=localhost port=5432 user=test-user dbname=test-database sslmode=disable password=test-password"
+	host := os.Getenv("psql_host")
+	port := os.Getenv("psql_port")
+	user := os.Getenv("psql_user")
+	password := os.Getenv("psql_passwd")
+	dbname := os.Getenv("psql_dbname")
+
+	dsn := "host="+host+" port="+port+" user="+user+" dbname="+dbname+" sslmode=disable password="+password+""
 
 	db, err = gorm.Open("postgres", dsn)
 
