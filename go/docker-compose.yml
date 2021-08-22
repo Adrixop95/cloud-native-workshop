@@ -1,20 +1,56 @@
 version: "3.8"
 services:
+    traefik:
+        image: "traefik:v2.5"
+        container_name: "traefik"
+        command:
+            - "--providers.docker=true"
+            - "--providers.docker.exposedbydefault=true"
+            - "--entrypoints.web.address=:80"
+            - "--entrypoints.web-secure.address=:443"
+            - "--entrypoints.web.forwardedheaders.insecure"
+            - "--entrypoints.web.proxyprotocol.insecure"
+            - "--certificatesresolvers.letsencrypt.acme.email=adrixop95@me.com"
+            - "--certificatesresolvers.letsencrypt.acme.storage=/ssl/acme.json"
+            - "--certificatesresolvers.letsencrypt.acme.tlschallenge=true"
+        labels:
+            - "traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)"
+            - "traefik.http.routers.http-catchall.entrypoints=web"
+            - "traefik.http.routers.http-catchall.middlewares=redirect-to-https"
+            - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+        volumes:
+            - "/var/run/docker.sock:/var/run/docker.sock:ro"
+            - "traefik_le:/ssl"
+        ports:
+            - "80:80"
+            - "443:443"
+        restart: unless-stopped
+        networks:
+            - go-app
+
     go-app:
         build:
             dockerfile: Dockerfile
             context: .
+        deploy:
+            replicas: 3
         environment:
             - psql_host=psql-db
             - psql_port=5432
             - psql_user=test-user
             - psql_passwd=test-password
             - psql_dbname=test-database
-        ports:
-            - "8080:8080"
-        container_name: "go-app"
+        labels:
+            - traefik.enable=true
+            - traefik.http.routers.go-app.rule=Host(`app.localhost`)
+            - traefik.http.services.go-app.loadbalancer.server.port=8080
+            - traefik.http.routers.go-app.entrypoints=web-secure
+            - traefik.http.routers.go-app.tls=true
+            - traefik.http.routers.go-app.tls.certresolver=letsencrypt
         restart: unless-stopped
- 
+        networks:
+            - go-app
+
     psql-db:
         image: "postgres:13-alpine"
         container_name: "psql-db"
@@ -25,6 +61,13 @@ services:
         volumes:
             - psql-db:/var/lib/postgresql
         restart: unless-stopped
+        networks:
+            - go-app
 
 volumes:
+    traefik_le:
     psql-db:
+
+networks:
+    go-app:
+        name: fishka-network

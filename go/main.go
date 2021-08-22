@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -75,6 +76,7 @@ func main() {
 		db.Create(&drivers[index])
 	}
 
+	router.HandleFunc("/", GetHostname).Methods("GET")
 	router.HandleFunc("/cars", GetCars).Methods("GET")
 	router.HandleFunc("/cars/{id}", GetCar).Methods("GET")
 	router.HandleFunc("/drivers/{id}", GetDriver).Methods("GET")
@@ -83,6 +85,15 @@ func main() {
 	handler := cors.Default().Handler(router)
 
 	log.Fatal(http.ListenAndServe("0.0.0.0:8080", handler))
+}
+
+func GetHostname(w http.ResponseWriter, r *http.Request) {
+	hostname, err := os.Hostname()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	json.NewEncoder(w).Encode(hostname)
 }
 
 func GetCars(w http.ResponseWriter, r *http.Request) {
