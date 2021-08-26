@@ -26,7 +26,7 @@ jobs:
         id: docker_build_example
         uses: docker/build-push-action@v2
         with:
-          context: ${{GITHUB_WORKSPACE}}/build-example/.
+          context: $GITHUB_WORKSPACE/build-example/.
           push: true
           tags: adrixop95/build-example-cloud-native-workshop:latest,adrixop95/build-example-cloud-native-workshop:${{ github.sha }}
 
@@ -34,7 +34,7 @@ jobs:
         id: docker_compose_example
         uses: docker/build-push-action@v2
         with:
-          context: ${{GITHUB_WORKSPACE}}/compose-example/.
+          context: $GITHUB_WORKSPACE/compose-example/.
           push: true
           tags: adrixop95/compose-example-cloud-native-workshop:latest,adrixop95/compose-example-cloud-native-workshop:${{ github.sha }}
 
