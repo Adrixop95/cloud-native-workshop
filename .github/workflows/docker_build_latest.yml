@@ -40,9 +40,9 @@ jobs:
 
   scan_container:
     name: Scan latest container
-    needs: [docker_build_example, docker_compose_example]
+    needs: build_container
     runs-on: ubuntu-20.04
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/main'
     steps:
       - uses: azure/container-scan@v0
         with:
