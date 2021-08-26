@@ -11,4 +11,4 @@ WORKDIR /app
 
 COPY --from=build /app/cars /app/cars
 
-CMD "/app/cars"
+ENTRYPOINT [ "/app/cars" ]
