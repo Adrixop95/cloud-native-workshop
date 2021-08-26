@@ -47,6 +47,8 @@ jobs:
       - uses: azure/container-scan@v0
         with:
           image-name: registry.hub.docker.com/adrixop95/build-example-cloud-native-workshop:${{ github.sha }}
+        if: always()
       - uses: azure/container-scan@v0
         with:
           image-name: registry.hub.docker.com/adrixop95/compose-example-cloud-native-workshop:${{ github.sha }}
+        if: always()
