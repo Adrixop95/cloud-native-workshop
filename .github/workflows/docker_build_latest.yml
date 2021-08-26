@@ -21,7 +21,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push build-example
-        id: docker_build
+        id: docker_build_example
         uses: docker/build-push-action@v2
         with:
           context: build-example/.
@@ -29,15 +29,12 @@ jobs:
           tags: adrixop95/build-example-cloud-native-workshop:latest,adrixop95/build-example-cloud-native-workshop:${{ github.sha }}
 
       - name: Build and push compose-example
-        id: docker_build
+        id: docker_compose_example
         uses: docker/build-push-action@v2
         with:
           context: compose-example/.
           push: true
           tags: adrixop95/compose-example-cloud-native-workshop:latest,adrixop95/compose-example-cloud-native-workshop:${{ github.sha }}
-
-      - name: Image digest
-        run: echo ${{ steps.docker_build.outputs.digest }}
 
   scan_container:
     name: Scan latest container
