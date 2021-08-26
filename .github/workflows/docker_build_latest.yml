@@ -40,7 +40,7 @@ jobs:
 
   scan_container:
     name: Scan latest container
-    needs: build_container
+    needs: [docker_build_example, docker_compose_example]
     runs-on: ubuntu-20.04
     if: github.ref == 'refs/heads/master'
     steps:
