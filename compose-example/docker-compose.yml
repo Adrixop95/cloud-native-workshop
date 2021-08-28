@@ -29,9 +29,7 @@ services:
             - go-app
 
     go-app:
-        build:
-            dockerfile: Dockerfile
-            context: .
+        image: "adrixop95/compose-example-cloud-native-workshop:latest"
         deploy:
             replicas: 3
         environment:
@@ -70,4 +68,4 @@ volumes:
 
 networks:
     go-app:
-        name: fishka-network
+        name: go-app
