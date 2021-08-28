@@ -211,8 +211,47 @@ $ docker run -it ansible_container bash
 
 As you can see, building different containers is not difficult and you can use it for various purposes, the most important thing is practice, you can build a container with your web application or just build it and run it because you need to use another application that is not available on your system, surely you can come up with other reasons yourself 😉
 ## Multi-container Docker applications
+What if we have a group of containers that we want to run? To facilitate the entire process, we can use the docker-compose tool.  
 
+When installing the docker-desktop application on Windows and Mac, the docker-compose plugin should install itself, in the case of GNU / Linux systems it should be installed by yourself ▶ [Install docker-compose](https://docs.docker.com/compose/install/).  
 
+Docker-compose configuration files are saved in the yml / yaml format. Let's try to write it for the previously presented python application:
+```yml
+version: "3.9"
+services:
+    build-example:
+        build:
+            dockerfile: Dockerfile
+            context: .
+        ports:
+            - "8000:8000"
+        container_name: "build-example"
+        restart: unless-stopped
+```
+
+At the very beginning, the docker-compose file takes the version value, it is a predefined value that corresponds to a given version of the tool we want to use, then there is a service definition. It contains our containers that we want to run, here we define a website called "build-example", a container for it will be built from a local Dockerfile file, we issue port 8000 from the container to port 8000 on the host, we name our container and set it to restart policy. Then we need to execute the following commands to run our application:
+
+- Build an application
+    ```
+    $ docker-compose build
+    ```
+    ![compose build](media/composebuild.png)
+- Run the docker-compose file:
+    ```
+    $ docker-compose up
+    ```
+  ... or run the app in detech mode: 
+    ```
+    $ docker-compose up -d
+    ```
+    ![compose up](media/composeupd.png)
+- At the end, we can check the logs of our application:
+    ```
+    $ docker-compose logs --follow
+    ```
+    ![compose logs](media/composelogs.png)
+
+Let's move on to a more complicated example that can be found in the compose-example folder on this repository. There is a simple application written in golang that requires a PostgreSQL database to work, in addition, we will use the Traefik edge router to move and display the application. We also want the application itself to be run in 3 replicas to ensure application redundancy/HA.
 ## Additional tooltips and practices that do not match the rest of the guide
 
 - How to stop all running containers?

@@ -1,0 +1,10 @@
+version: "3.9"
+services:
+    build-example:
+        build:
+            dockerfile: Dockerfile
+            context: .
+        ports:
+            - "8000:8000"
+        container_name: "build-example"
+        restart: unless-stopped
