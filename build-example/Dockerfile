@@ -1,21 +1,29 @@
-FROM python:3.9-alpine as build
+##### Prepare base container
+FROM python:3.11-alpine as python-base
 
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE 1 \
+    PYTHONUNBUFFERED 1 \
+    PIP_NO_CACHE_DIR=off \
+    PIP_DISABLE_PIP_VERSION_CHECK=on \
+    PIP_DEFAULT_TIMEOUT=100 
+
+RUN apk --no-cache update && \
+    apk --no-cache upgrade && \
+    pip --no-cache-dir install pip setuptools --upgrade
+
+##### Prepare builder container
+FROM python-base as build
 
 RUN apk --no-cache add build-base
 
-RUN pip install pip setuptools --upgrade && \
-    pip install fastapi uvicorn[standard]
+RUN pip install fastapi uvicorn[standard]
 
-FROM python:3.9-alpine as publish
-
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+##### Prepare production image
+FROM python-base as publish
 
 WORKDIR /app
 
-COPY --from=build /usr/local/lib/python3.9/site-packages/ /usr/local/lib/python3.9/site-packages/
+COPY --from=build /usr/local/lib/python3.11/site-packages/ /usr/local/lib/python3.11/site-packages/
 COPY --from=build /usr/local/bin/ /usr/local/bin/
 
 COPY main.py /app/main.py
